@@ -1,0 +1,16 @@
+{
+  "name": "test-nodejs-excel-export",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "generate" : "node ./generate.js",
+    "clean": "node ./cleanup.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "node-excel-export": "^1.4.4"
+  }
+}

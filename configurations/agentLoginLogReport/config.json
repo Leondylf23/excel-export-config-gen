@@ -1,0 +1,26 @@
+{
+    "title": "Raise Call Report",
+    "category": "agent",
+    "report": "loginLog",
+    "excelConfig": [
+        { "headerName": "User ID", "key": "userId", "width": 20 }, 
+        { "headerName": "Agent Fullname", "key": "agentFullname", "width": 20 }, 
+        { "headerName": "Agent Username", "key": "agentUsername", "width": 20 }, 
+        { "headerName": "Time Last Login", "key": "timeLastLogin", "width": 20 },
+        { "headerName": "Date And Time", "key": "dateAndTime", "width": 20 }
+    ],
+    "xmlConfig": {
+        "headerRange": "A7:E12",
+        "rowRange": "A13:E13"
+    },
+    "filtersData": [
+        {
+            "name": "agentFullname",
+            "query": "ost_task.staff_id IN (:staffIds)"
+        },
+        {
+            "name": "state",
+            "query": "ost_task.team_id IN (:group)"
+        }
+    ]
+}

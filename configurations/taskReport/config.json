@@ -1,0 +1,46 @@
+{
+    "title": "Raise Call Report",
+    "category": "task",
+    "report": "report",
+    "excelConfig": [
+        { "headerName": "Task ID", "key": "taskId", "width": 20 }, 
+        { "headerName": "Ticket ID", "key": "ticketId", "width": 20 }, 
+        { "headerName": "Ticket Title", "key": "ticketTitle", "width": 20 }, 
+        { "headerName": "Case Category", "key": "caseCategory", "width": 20 }, 
+        { "headerName": "Task Title", "key": "taskTitle", "width": 20 },
+        { "headerName": "Task Description", "key": "taskDescription", "width": 20 },
+        { "headerName": "Task Departement", "key": "taskDepartment", "width": 20 },
+        { "headerName": "Assigned To", "key": "assignedTo", "width": 20 },
+        { "headerName": "Group", "key": "group", "width": 20 },
+        { "headerName": "Status", "key": "status", "width": 20 },
+        { "headerName": "Created By", "key": "createdBy", "width": 20 },
+        { "headerName": "Created Start Date", "key": "createdStartDate", "width": 20 },
+        { "headerName": "Created End Date", "key": "createdEndDate", "width": 20 },
+        { "headerName": "Creation Date", "key": "creationDate", "width": 20 },
+        { "headerName": "Completion Date", "key": "completionDate", "width": 20 },
+        { "headerName": "Time to Completion", "key": "timeToCompletion", "width": 20 },
+        { "headerName": "Due Date", "key": "dueDate", "width": 20 }
+    ],
+    "xmlConfig": {
+        "headerRange": "A7:Q12",
+        "rowRange": "A13:Q13"
+    },
+    "filtersData": [
+        {
+            "name": "assignedTo",
+            "query": "ost_task.staff_id IN (:assignedTo)"
+        },
+        {
+            "name": "group",
+            "query": "ost_task.team_id IN (:group)"
+        },
+        {
+            "name": "caseCategory",
+            "query": "ost_ticket.topic_id = :caseCategory"
+        },
+        {
+            "name": "status",
+            "query": "ost_task.flags = :status"
+        }
+    ]
+}
