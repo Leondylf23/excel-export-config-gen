@@ -67,6 +67,7 @@ const generator = async (filters) => {
     path.join(__dirname, `./configurations/${configName}/queryTemplate.ini`),
     "utf8"
   );
+  
   // Replace placeholder
   let isFirstClause = false;
   if (templateQuery.indexOf("@where") !== -1) {
