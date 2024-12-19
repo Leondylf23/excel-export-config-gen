@@ -2,14 +2,14 @@ const fs = require("fs");
 const ExcelJS = require("exceljs");
 const path = require("path");
 
-
 /* 
 Configurations --------------------------------
 */
 
-// All Config
-const configName = 'taskReport'; // Must define config name file from folder name in folder configurations
+// Changeable Configurations --------------------------------
+const configName = "taskReport"; // Must define config name file from folder name in folder configurations
 
+// All Config
 const configJSON = require(`./configurations/${configName}/config.json`);
 
 const catogory = configJSON.category;
@@ -24,7 +24,8 @@ const excelConfig = configJSON.excelConfig;
 // XML config
 const xmlConfig = configJSON.xmlConfig;
 
-// Posibbles Generator
+// Proccessors --------------------------------
+// Posiblities Generator
 const getCombinations = (array) => {
   const result = [];
 
@@ -48,119 +49,139 @@ const getCombinations = (array) => {
 
 const possibleCombinations = getCombinations(filtersData);
 
-
-// Proccessors --------------------------------
+// File Generator
 const generator = async (filters) => {
-  const filterNames = filters.map(f => f.name);
-  const combinationFileName = filtersData.map(e => {
-    return filterNames.includes(e.name) ? `${e.name}Selected` : `${e.name}All`;
-  }).join('-');
+  const filterNames = filters.map((f) => f.name);
+  const combinationFileName = filtersData
+    .map((e) => {
+      return filterNames.includes(e.name)
+        ? `${e.name}Selected`
+        : `${e.name}All`;
+    })
+    .join("-");
 
-        console.log(`Combinations: ${combinationFileName}`);
+  console.log(`Combinations: ${combinationFileName}`);
 
-        // Query SQL Template
-        let templateQuery = fs.readFileSync(path.join(__dirname, `./configurations/${configName}/queryTemplate.ini`), 'utf8');
-        // Replace placeholder
-        let isFirstClause = false;
-        if (templateQuery.indexOf('@where') !== -1) {
-          isFirstClause = true;
-          templateQuery =  templateQuery.replace('@where', filters.length > 0 ? '\nWHERE' : '');
-        }
-        
-        let queryPlaceholder = filters.length > 0 ? `\n  ${isFirstClause ? '' : 'AND'} ` + filters.map(e => e.query).join('\n  AND ') : '';
-        templateQuery = templateQuery.replace('@replace', queryPlaceholder);
-        
-        // XML Template
-        let templateXML = fs.readFileSync(path.join(__dirname, `./configurations/${configName}/xmlTemplate.xml`), 'utf8');
-        templateXML = templateXML.replace('@headerRange', xmlConfig.headerRange);
-        templateXML = templateXML.replace('@rowRange', xmlConfig.rowRange);
-        
+  // Query SQL Template
+  let templateQuery = fs.readFileSync(
+    path.join(__dirname, `./configurations/${configName}/queryTemplate.ini`),
+    "utf8"
+  );
+  // Replace placeholder
+  let isFirstClause = false;
+  if (templateQuery.indexOf("@where") !== -1) {
+    isFirstClause = true;
+    templateQuery = templateQuery.replace(
+      "@where",
+      filters.length > 0 ? "\nWHERE" : ""
+    );
+  }
 
-        // Worksheet Templete
-        const workbook = new ExcelJS.Workbook();
-        const sheet = workbook.addWorksheet("Sheet1");
-  
-        // Add a header & Spaces
-        sheet.addRow([]);
-        sheet.addRow([]);
-        sheet.addRow([]);
-        sheet.addRow([]);
-        sheet.addRow([]);
-        sheet.addRow([]);
-        sheet.addRow([]);
-        sheet.addRow([]);
-  
-        sheet.mergeCells('A7:C8');
-        sheet.getCell('A7').value = excelHeaderTitle;
-        sheet.getCell('A7').font = { name: "Arial", size: 14, bold: true };
-        sheet.getCell('A7').alignment = { horizontal: "center", vertical: "middle" };
-  
-        sheet.addRow([]);
-        sheet.addRow([]);
-        sheet.addRow([]);
-  
-        sheet.getCell('A10').value = 'Tanggal'
-        sheet.getCell('A10').font = { name: "Arial", size: 12, bold: true };
-  
-        sheet.getCell('B10').value = { text: '~{@dateFrom}', hyperlink: 'mailto:~%7B@dateFrom%7D' }
-        sheet.getCell('C10').value = { text: '~{@dateTo}', hyperlink: 'mailto:~%7B@dateTo%7D' }
-  
-        sheet.addRow(excelConfig.map(e => e.headerName));
-  
-        sheet.columns = excelConfig.map(e => ({ ...e, headerName: undefined }));
-  
-        const headerRow = sheet.getRow(12);
-        headerRow.eachCell((cell, colNum) => {
-          cell.border = {
-            top: { style: "thin" },
-            bottom: { style: "thin" },
-            left: { style: "thin" },
-            right: { style: "thin" }
-          }
-          cell.font = { name: 'Arial', bold: true }
-        });
-  
-        sheet.addRow(excelConfig.map(e => ({ text: `~{@${e.key}}`, hyperlink: `mailto:~%7B@${e.key}%7D` })));
-        const valueRow = sheet.getRow(13);
-        valueRow.eachCell((cell, colNum) => {
-          cell.border = {
-            top: { style: "thin" },
-            bottom: { style: "thin" },
-            left: { style: "thin" },
-            right: { style: "thin" }
-          }
-          cell.font = { name: 'Arial' }
-        });
-  
+  let queryPlaceholder =
+    filters.length > 0
+      ? `\n  ${isFirstClause ? "" : "AND"} ` +
+        filters.map((e) => e.query).join("\n  AND ")
+      : "";
+  templateQuery = templateQuery.replace("@replace", queryPlaceholder);
 
-        // Write Files
-        const fileNameFormat = `${catogory}-${report}-${combinationFileName}`;
-        const exportDir = `./exports/${configName}`;
+  // XML Template
+  let templateXML = fs.readFileSync(
+    path.join(__dirname, `./configurations/${configName}/xmlTemplate.xml`),
+    "utf8"
+  );
+  templateXML = templateXML.replace("@headerRange", xmlConfig.headerRange);
+  templateXML = templateXML.replace("@rowRange", xmlConfig.rowRange);
 
-        if (!fs.existsSync(path.join(__dirname, exportDir))) fs.mkdirSync(path.join(__dirname, exportDir));
-        
-        // Write Excel
-        await workbook.xlsx.writeFile(`${exportDir}/${fileNameFormat}.xlsx`);
+  // Worksheet Templete
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("Sheet1");
 
-        // Write .ini
-        fs.writeFileSync(
-          path.join(
-            __dirname,
-            `${exportDir}/${fileNameFormat}.ini`
-          ),
-          templateQuery,
-          { encoding: "utf8" }
-        );
+  // Add a header & Spaces
+  sheet.addRow([]);
+  sheet.addRow([]);
+  sheet.addRow([]);
+  sheet.addRow([]);
+  sheet.addRow([]);
+  sheet.addRow([]);
+  sheet.addRow([]);
+  sheet.addRow([]);
 
-        // Write .xml
-        fs.writeFileSync(
-          path.join(
-            __dirname,
-            `${exportDir}/${fileNameFormat}.xml`
-          ),
-          templateXML
-        );
-}
+  sheet.mergeCells("A7:C8");
+  sheet.getCell("A7").value = excelHeaderTitle;
+  sheet.getCell("A7").font = { name: "Arial", size: 14, bold: true };
+  sheet.getCell("A7").alignment = { horizontal: "center", vertical: "middle" };
+
+  sheet.addRow([]);
+  sheet.addRow([]);
+  sheet.addRow([]);
+
+  sheet.getCell("A10").value = "Tanggal";
+  sheet.getCell("A10").font = { name: "Arial", size: 12, bold: true };
+
+  sheet.getCell("B10").value = {
+    text: "~{@dateFrom}",
+    hyperlink: "mailto:~%7B@dateFrom%7D",
+  };
+  sheet.getCell("C10").value = {
+    text: "~{@dateTo}",
+    hyperlink: "mailto:~%7B@dateTo%7D",
+  };
+
+  sheet.addRow(excelConfig.map((e) => e.headerName));
+
+  sheet.columns = excelConfig.map((e) => ({ ...e, headerName: undefined }));
+
+  const headerRow = sheet.getRow(12);
+  headerRow.eachCell((cell, colNum) => {
+    cell.border = {
+      top: { style: "thin" },
+      bottom: { style: "thin" },
+      left: { style: "thin" },
+      right: { style: "thin" },
+    };
+    cell.font = { name: "Arial", bold: true };
+  });
+
+  sheet.addRow(
+    excelConfig.map((e) => ({
+      text: `~{@${e.key}}`,
+      hyperlink: `mailto:~%7B@${e.key}%7D`,
+    }))
+  );
+  const valueRow = sheet.getRow(13);
+  valueRow.eachCell((cell, colNum) => {
+    cell.border = {
+      top: { style: "thin" },
+      bottom: { style: "thin" },
+      left: { style: "thin" },
+      right: { style: "thin" },
+    };
+    cell.font = { name: "Arial" };
+  });
+
+  // Write Files
+  const fileNameFormat = `${catogory}-${report}-${combinationFileName}`;
+  const exportDir = `./exports/${configName}`;
+
+  if (!fs.existsSync(path.join(__dirname, exportDir)))
+    fs.mkdirSync(path.join(__dirname, exportDir));
+
+  // Write Excel
+  await workbook.xlsx.writeFile(`${exportDir}/${fileNameFormat}.xlsx`);
+
+  // Write .ini
+  fs.writeFileSync(
+    path.join(__dirname, `${exportDir}/${fileNameFormat}.ini`),
+    templateQuery,
+    { encoding: "utf8" }
+  );
+
+  // Write .xml
+  fs.writeFileSync(
+    path.join(__dirname, `${exportDir}/${fileNameFormat}.xml`),
+    templateXML
+  );
+};
 
 const start = async () => {
   console.log("GENERATING");
@@ -171,10 +192,11 @@ const start = async () => {
   // With Combination
   for (let i = 0; i < possibleCombinations.length; i++) {
     const filters = possibleCombinations[i];
-    
+
     generator(filters);
   }
 };
 
-if (!fs.existsSync(path.join(__dirname, './exports'))) fs.mkdirSync(path.join(__dirname, './exports'));
+if (!fs.existsSync(path.join(__dirname, "./exports")))
+  fs.mkdirSync(path.join(__dirname, "./exports"));
 start();
