@@ -13,14 +13,5 @@
         "headerRange": "A7:E12",
         "rowRange": "A13:E13"
     },
-    "filtersData": [
-        {
-            "name": "agentFullname",
-            "query": "ost_task.staff_id IN (:staffIds)"
-        },
-        {
-            "name": "state",
-            "query": "ost_task.team_id IN (:group)"
-        }
-    ]
+    "filtersData": []
 }

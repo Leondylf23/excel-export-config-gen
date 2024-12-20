@@ -14,8 +14,6 @@
         { "headerName": "Group", "key": "group", "width": 20 },
         { "headerName": "Status", "key": "status", "width": 20 },
         { "headerName": "Created By", "key": "createdBy", "width": 20 },
-        { "headerName": "Created Start Date", "key": "createdStartDate", "width": 20 },
-        { "headerName": "Created End Date", "key": "createdEndDate", "width": 20 },
         { "headerName": "Creation Date", "key": "creationDate", "width": 20 },
         { "headerName": "Completion Date", "key": "completionDate", "width": 20 },
         { "headerName": "Time to Completion", "key": "timeToCompletion", "width": 20 },
@@ -33,14 +31,6 @@
         {
             "name": "group",
             "query": "ost_task.team_id IN (:group)"
-        },
-        {
-            "name": "caseCategory",
-            "query": "ost_ticket.topic_id = :caseCategory"
-        },
-        {
-            "name": "status",
-            "query": "ost_task.flags = :status"
         }
     ]
 }

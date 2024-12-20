@@ -60,7 +60,7 @@ const generator = async (filters) => {
     })
     .join("-");
 
-  console.log(`Combinations: ${combinationFileName}`);
+  console.log(`Combinations: ${combinationFileName !== '' ?  combinationFileName : 'No Combinations'}`);
 
   // Query SQL Template
   let templateQuery = fs.readFileSync(
@@ -80,8 +80,8 @@ const generator = async (filters) => {
 
   let queryPlaceholder =
     filters.length > 0
-      ? `\n  ${isFirstClause ? "" : "AND"} ` +
-        filters.map((e) => e.query).join("\n  AND ")
+      ? `\n    ${isFirstClause ? "" : "AND "}` +
+        filters.map((e) => e.query).join("\n    AND ")
       : "";
   templateQuery = templateQuery.replace("@replace", queryPlaceholder);
 
@@ -161,7 +161,7 @@ const generator = async (filters) => {
   });
 
   // Write Files
-  const fileNameFormat = `${catogory}-${report}-${combinationFileName}`;
+  const fileNameFormat = `${catogory}-${report}${combinationFileName !== '' ? `-${combinationFileName}` : ''}`;
   const exportDir = `./exports/${configName}`;
 
   if (!fs.existsSync(path.join(__dirname, exportDir)))
