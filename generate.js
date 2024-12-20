@@ -50,7 +50,7 @@ const getCombinations = (array) => {
 const possibleCombinations = getCombinations(filtersData);
 
 // File Generator
-const generator = async (filters) => {
+const generator = async (filters, isSample) => {
   const filterNames = filters.map((f) => f.name);
   const combinationFileName = filtersData
     .map((e) => {
@@ -60,14 +60,26 @@ const generator = async (filters) => {
     })
     .join("-");
 
-  console.log(`Combinations: ${combinationFileName !== '' ?  combinationFileName : 'No Combinations'}`);
+  console.log(
+    `Combinations: ${
+      combinationFileName !== "" && !isSample? combinationFileName : `No Combinations${isSample ? " - Sample" : ""}`
+    }`
+  );
 
   // Query SQL Template
-  let templateQuery = fs.readFileSync(
-    path.join(__dirname, `./configurations/${configName}/queryTemplate.ini`),
-    "utf8"
-  );
-  
+  let templateQuery;
+  if (isSample) {
+    templateQuery = fs.readFileSync(
+      path.join(__dirname, `./configurations/${configName}/sampleQuery.ini`),
+      "utf8"
+    );
+  } else {
+    templateQuery = fs.readFileSync(
+      path.join(__dirname, `./configurations/${configName}/queryTemplate.ini`),
+      "utf8"
+    );
+  }
+
   // Replace placeholder
   let isFirstClause = false;
   if (templateQuery.indexOf("@where") !== -1) {
@@ -109,7 +121,7 @@ const generator = async (filters) => {
 
   sheet.mergeCells("A7:C8");
   sheet.getCell("A7").value = excelHeaderTitle;
-  sheet.getCell("A7").font = { name: "Arial", size: 14, bold: true };
+  sheet.getCell("A7").font = { name: "Arial", size: 16, bold: true };
   sheet.getCell("A7").alignment = { horizontal: "center", vertical: "middle" };
 
   sheet.addRow([]);
@@ -117,7 +129,7 @@ const generator = async (filters) => {
   sheet.addRow([]);
 
   sheet.getCell("A10").value = "Tanggal";
-  sheet.getCell("A10").font = { name: "Arial", size: 12, bold: true };
+  sheet.getCell("A10").font = { name: "Arial", size: 11, bold: true };
 
   sheet.getCell("B10").value = {
     text: "~{@dateFrom}",
@@ -161,8 +173,10 @@ const generator = async (filters) => {
   });
 
   // Write Files
-  const fileNameFormat = `${catogory}-${report}${combinationFileName !== '' ? `-${combinationFileName}` : ''}`;
-  const exportDir = `./exports/${catogory}-${report}`;
+  const fileNameFormat = `${catogory}-${report}${
+    combinationFileName !== "" && !isSample ? `-${combinationFileName}` : ""
+  }`;
+  const exportDir = `./exports/${catogory}-${report}${isSample ? '-sample': ''}`;
 
   if (!fs.existsSync(path.join(__dirname, exportDir)))
     fs.mkdirSync(path.join(__dirname, exportDir));
@@ -186,6 +200,9 @@ const generator = async (filters) => {
 
 const start = async () => {
   console.log("GENERATING");
+
+  // If there any sample
+  if (fs.existsSync(path.join(__dirname,`./configurations/${configName}/sampleQuery.ini`))) generator([], true);
 
   // No Combinations
   generator([]);

@@ -1,5 +1,5 @@
 {
-    "title": "Raise Call Report",
+    "title": "Report Agent Login Log",
     "category": "agent",
     "report": "loginLog",
     "excelConfig": [
@@ -16,7 +16,7 @@
     "filtersData": [
         {
             "name": "staffId",
-            "query": "AND ost_staff.staff_id = :staffId"
+            "query": "ost_staff.staff_id = :staffId"
         }
     ]
 }

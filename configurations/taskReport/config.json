@@ -1,5 +1,5 @@
 {
-    "title": "Raise Call Report",
+    "title": "Report: Task Report",
     "category": "task",
     "report": "report",
     "excelConfig": [
@@ -34,11 +34,11 @@
         },
         {
             "name": "caseCategory",
-            "query": "AND ost_ticket.topic_id = :caseCategory"
+            "query": "ost_ticket.topic_id = :caseCategory"
         },
         {
             "name": "status",
-            "query": "AND ost_task.flags = :status"
+            "query": "ost_task.flags = :status"
         }
     ]
 }
