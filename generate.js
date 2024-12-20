@@ -162,7 +162,7 @@ const generator = async (filters) => {
 
   // Write Files
   const fileNameFormat = `${catogory}-${report}${combinationFileName !== '' ? `-${combinationFileName}` : ''}`;
-  const exportDir = `./exports/${configName}`;
+  const exportDir = `./exports/${catogory}-${report}`;
 
   if (!fs.existsSync(path.join(__dirname, exportDir)))
     fs.mkdirSync(path.join(__dirname, exportDir));

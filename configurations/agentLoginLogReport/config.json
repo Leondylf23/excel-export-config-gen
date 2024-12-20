@@ -13,5 +13,10 @@
         "headerRange": "A7:E12",
         "rowRange": "A13:E13"
     },
-    "filtersData": []
+    "filtersData": [
+        {
+            "name": "staffId",
+            "query": "AND ost_staff.staff_id = :staffId"
+        }
+    ]
 }

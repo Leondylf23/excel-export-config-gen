@@ -1,6 +1,6 @@
 {
     "title": "Raise Call Report",
-    "category": "task",
+    "category": "task2",
     "report": "report",
     "excelConfig": [
         { "headerName": "Task ID", "key": "taskId", "width": 20 }, 
@@ -33,12 +33,36 @@
             "query": "ost_task.team_id IN (:group)"
         },
         {
-            "name": "caseCategory",
-            "query": "AND ost_ticket.topic_id = :caseCategory"
+            "name": "group1",
+            "query": "ost_task.team_id IN (:group)"
         },
         {
-            "name": "status",
-            "query": "AND ost_task.flags = :status"
+            "name": "group2",
+            "query": "ost_task.team_id IN (:group)"
+        },
+        {
+            "name": "group3",
+            "query": "ost_task.team_id IN (:group)"
+        },
+        {
+            "name": "group4",
+            "query": "ost_task.team_id IN (:group)"
+        },
+        {
+            "name": "group5",
+            "query": "ost_task.team_id IN (:group)"
+        },
+        {
+            "name": "group6",
+            "query": "ost_task.team_id IN (:group)"
+        },
+        {
+            "name": "group7",
+            "query": "ost_task.team_id IN (:group)"
+        },
+        {
+            "name": "group8",
+            "query": "ost_task.team_id IN (:group)"
         }
     ]
 }
