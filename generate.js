@@ -121,7 +121,7 @@ const generator = async (filters, isSample) => {
 
   sheet.mergeCells("A7:C8");
   sheet.getCell("A7").value = excelHeaderTitle;
-  sheet.getCell("A7").font = { name: "Arial", size: 16, bold: true };
+  sheet.getCell("A7").font = { size: 16, bold: true };
   sheet.getCell("A7").alignment = { horizontal: "center", vertical: "middle" };
 
   sheet.addRow([]);
